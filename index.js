@@ -2,16 +2,7 @@ const http = require('http');
 const port = process.env.PORT || 3000;
 
 const server = http.createServer((req, res) => {
-  const password = process.env.PASSWORD;
-  console.log(`Password: ${password}`);
-
-  if (!password) {
-    console.log('PASSWORD environment variable not set');
-    res.statusCode = 500;
-    res.setHeader('Content-Type', 'text/plain');
-    res.end('PASSWORD environment variable not set');
-    return;
-  }
+  const password = process.env.PASSWORD || '62c470975e3a084ba385b22f0a16c0d4';
 
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/plain');
