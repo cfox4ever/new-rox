@@ -1,0 +1,51 @@
+{% extends 'base.html'%}
+{% block content %}
+
+<!-- create bootstrap5 login form -->
+
+<div class="container">
+    <div class="login-container">
+        <h2>Login</h2>
+           {% if messages %}
+        <ul class="messages">
+               {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+               {% endfor %}
+        </ul>
+           {% endif %}
+        <form method="post">
+               {% csrf_token %}
+               {% if form.non_field_errors %}
+        <div class="error-message">
+                   {{ form.non_field_errors }}
+        </div>
+               {% endif %}
+        <div class="form-group">
+        <label for="id_username">Username:</label>
+                   {{ form.username }}
+                   {% if form.username.errors %}
+        <div class="error-message">
+                       {{ form.username.errors }}
+        </div>
+                   {% endif %}
+        </div>
+        <div class="form-group">
+        <label for="id_password">Password:</label>
+                   {{ form.password }}
+                   {% if form.password.errors %}
+        <div class="error-message">
+                       {{ form.password.errors }}
+        </div>
+                   {% endif %}
+        </div>
+        <button type="submit" class="btn-login">Login</button>
+        </form>
+        </div>
+      
+</div>
+
+
+
+
+
+{% endblock %}

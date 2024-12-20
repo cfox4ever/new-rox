@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% block header %}
+
+{% include "table/header.html" %}
+
+
+
+
+
+{% endblock %}
+{% block css %}
+
+<style>
+    div.form {
+        position: relative;
+        left: 30px;
+    }
+</style>
+{% endblock css %}
+{% block content %}
+
+
+<section class="blog-posts">
+
+    <div class="container">
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            {% include 'partial/formerrors.html' %}
+            <!-- Branch Name -->
+            <div class="mb-3 row">
+
+                <div class="col-sm-6">
+
+                    {{ form.name|add_class:"form-control" }}
+
+
+                </div>
+                <div class="col-sm-6">
+
+                    {{ form.phone|add_class:"form-control" }}
+
+
+                </div>
+            </div>
+            <!-- Phone -->
+
+            <!-- Address 1 -->
+            <div class="mb-3 row">
+                
+                <div class="col-sm-6">
+
+                    {{ form.address_1|add_class:"form-control" }}
+                   
+                </div>
+                <div class="col-sm-6">
+
+                    {{ form.address_2|add_class:"form-control" }}
+                   
+                </div>
+            </div>
+            <!-- Address 2 -->
+            
+            <!-- City -->
+            <div class="mb-3 row">
+              
+                <div class="col-sm-4">
+
+                    {{ form.city|add_class:"form-control" }}
+                   
+                </div>
+                <div class="col-sm-4">
+
+                    {{ form.state|add_class:"form-select" }}
+                   
+                </div>
+                <div class="col-sm-4">
+
+                    {{ form.zip_code|add_class:"form-control" }}
+                   
+                </div>
+                
+            </div>
+           
+            <!-- Status -->
+            <div class="mb-3 row">
+                <div class="col-sm-4">
+                    <label class="col-sm-2 col-form-label ">Status</label>
+
+                    {{ form.status|add_class:"form-select" }}
+                </div>
+            </div>
+            <!-- Submit Button -->
+            <div class="text-center">
+                <button class="btn btn-{% if editing %}danger{% else %}primary{% endif%}">{% if editing %}Update{% else %}Add{% endif%} Branch</button>
+                <a href="{% url 'home' %}" class="btn btn-warning">Cancel</a>
+
+            </div>
+        </form>
+    </div> <!-- end container -->
+    <br>
+
+
+
+    <table class="footable mb-3"  data-paging="true" data-sorting="true">
+
+        <thead>
+            <tr>
+                <!-- data-toggle = where the toggle icon will appear -->
+                <th>ID</th>
+                <!-- hide this column in tablet and mobile -->
+                <th>Branch Name</th>
+                <!-- hide this column in mobile devices -->
+                <th data-breakpoints="xs sm">Adress </th>
+                <th data-breakpoints="xs sm">Status </th>
+                <th data-breakpoints="xs sm" data-filterable="false">Edit </th>
+
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for data in data %}
+            <tr>
+                <td>{{ data.id}}</td>
+                <td>{{ data.name }}</td>
+                <td>{{ data.address_1 }},
+                    {%if address_2 %}{{data.address_2}} {% endif%},{{data.city}},{{data.state}} {{data.zip_code}}
+                </td>
+                <td>{{data.status}}</td>
+                <td>
+                    <a type="button" class="btn btn-warning" href="/branch/{{ data.id }}">Edit </a>
+                </td>
+            </tr>
+            {% endfor %}
+
+
+        </tbody>
+        <tfoot class="hide-if-no-paging">
+            
+        </tfoot>
+    </table>
+
+</section>
+{% endblock %}
+{% block footer %}
+{% include "table/footer.html" %}
+{% endblock footer %}
+{% block js %}
+
+
+
+{% endblock %}

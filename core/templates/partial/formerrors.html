@@ -1,0 +1,9 @@
+{{ form.non_field_errors }}
+{% if form.errors %}
+ <div class="notification is-danger">
+  <button class="delete"></button>
+				{% for field in form %}
+					{% if field.errors %}<strong>  {{ field.errors|striptags }} <br></strong >{% endif %}
+				{% endfor %}
+</div>
+{% endif %}
