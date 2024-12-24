@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "django_htmx",
     'private_storage',
     "widget_tweaks",
     'simple_history',
@@ -56,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
      'simple_history.middleware.HistoryRequestMiddleware',
+     "django_htmx.middleware.HtmxMiddleware",
 ]
 
 ROOT_URLCONF = 'Roxinvoices.urls'
