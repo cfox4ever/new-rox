@@ -1,0 +1,9 @@
+<td id="r-{{data.id}}">
+    {% if data.received_date %}
+    {{ data.received_date|date:"Y-m-d H:i" }}
+    {% endif %}
+    <a class="btn btn-warning btn-sm" hx-get="{% url 'recieve_now' data.id %}" hx-target="#r-{{data.id}}"
+        hx-swap="outerHTML">
+        Receive Now
+    </a>
+</td>

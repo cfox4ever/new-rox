@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block header %}
+{% include "table/header.html" %}
+<script src="https://unpkg.com/htmx.org@2.0.4"></script>
+
+
+
+
+
+{% endblock %}
+{% block css %}
+<style>
+    .collapsible {
+        background-color: #777;
+        color: white;
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 15px;
+    }
+
+    .active,
+    .collapsible:hover {
+        background-color: #555;
+    }
+
+    .content {
+        padding: 0 18px;
+        display: none;
+        overflow: hidden;
+        background-color: #f1f1f1;
+    }
+
+    .flashing-text {
+        color: #FF0000;
+        /* This is a red color */
+    }
+</style>
+<style>
+    div.form {
+        position: relative;
+        left: 30px;
+    }
+</style>
+{% endblock css %}
+{% block content %}
+
+
+
+
+
+
+{% include "partials/form_errors.html "%}
+<section class="blog-posts">
+
+    <form method="POST" enctype="multipart/form-data" class="mx-2">
+
+        {% csrf_token %}
+
+        {% include 'partial/formerrors.html' %}
+        <!-- Branch Name -->
+        <div class="mb-3 row">
+            <div class="col-sm-2">
+                <label class="col-sm-2 col-form-label ">Branch</label>
+                {{ form.branch|add_class:"form-select" }}
+            </div>
+            <div class="col-sm-2">
+                <label class="col-sm-2 col-form-label ">Vendor</label>
+                {{ form.vendor|add_class:"form-select" }}
+            </div>
+            <div class="col-sm-2">
+                <label class="col-sm-2 col-form-label ">Quote#</label>
+                {{ form.quote_number|add_class:"form-control" }}
+            </div>
+            <div class="col-sm-2">
+                <label class="col-sm-2 col-form-label ">Invoice#</label>
+                {{ form.invoice_number|add_class:"form-control" }}
+            </div>
+            <div class="col-sm-2">
+                <label class="col-sm-2 col-form-label ">Requestion#</label>
+                {{ form.requisition_number|add_class:"form-control" }}
+            </div>
+            <div class="col-sm-2">
+                <label class="col-sm-2 col-form-label ">PO#</label>
+                {{ form.po_number|add_class:"form-control" }}
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <div class="col-sm-2">
+                <label class="col-sm-2 col-form-label ">Total</label>
+                {{ form.total|add_class:"form-control" }}
+            </div>
+            <div class="col-sm-2">
+                <label class="col-sm-2 col-form-label ">Shipping</label>
+                {{ form.shipping|add_class:"form-control" }}
+            </div>
+            <div class="col-sm-2">
+                <label class="col-sm-2 col-form-label ">Tax</label>
+                {{ form.tax|add_class:"form-control" }}
+            </div>
+            <div class="col-sm-2">
+                <label class="col-sm-4 col-form-label ">Grand Total</label>
+                {{ form.grand_total|add_class:"form-control" }}
+            </div>
+            <div class="col-sm-2">
+                <label class="col-sm-4 col-form-label ">URL</label>
+                {{ form.url|add_class:"form-control" }}
+            </div>
+
+
+        </div>
+        <div class="mb-3 row">
+            <div class="col-sm-3">
+                <label class="col-sm-3 col-form-label ">Invoice Date</label>
+                {{ form.invoice_date|add_class:"form-control" }}
+            </div>
+            <div class="col-sm-3">
+                <label class="col-sm-2 col-form-label ">Req Date</label>
+                {{ form.requisition_date|add_class:"form-control" }}
+            </div>
+            <div class="col-sm-3">
+                <label class="col-sm-2 col-form-label ">PO Date</label>
+                {{ form.po_date|add_class:"form-control" }}
+            </div>
+            <div class="col-sm-3">
+                <label class="col-sm-3 col-form-label ">Recieve Date</label>
+                {{ form.received_date|add_class:"form-control" }}
+            </div>
+
+
+
+        </div>
+        <div class="mb-3 row">
+            <div class="col-sm-3">
+                <label class="col-sm-4 col-form-label ">Sent to AP Date</label>
+                {{ form.sent_to_ap_date|add_class:"form-control" }}
+            </div>
+            <div class="col-sm-2">
+                <label class="col-sm-2 col-form-label ">Status</label>
+                {{ form.status|add_class:"form-control" }}
+            </div>
+        </div>
+        <div class="text-center">
+            <button class="btn btn-{% if editing %}danger{% else %}primary{% endif%}">{% if editing %}Update invoice{%
+                else
+                %}Add{% endif%} Add invoice</button>
+            <a href="{% url 'home' %}" class="btn btn-warning">Cancel</a>
+
+        </div>
+    </form>
+
+
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+
+
+{% include "partials/table.html" %}
+
+{% endblock %}
+{% block footer %}
+{% include "table/footer.html" %}
+{% endblock footer %}
+{% block js %}
+<script>
+    // Function to update grand total
+    function updateGrandTotal () {
+        // Get the values of the fields
+        const total = parseFloat(document.getElementById('id_total').value) || 0;
+        const shipping = parseFloat(document.getElementById('id_shipping').value) || 0;
+        const tax = parseFloat(document.getElementById('id_tax').value) || 0;
+        // Calculate the grand total
+        const grandTotal = total + shipping + tax;
+        // Set the grand total value
+        document.getElementById('id_grand_total').value = grandTotal.toFixed(2);
+    }
+    // Ensure the DOM is fully loaded before applying the script
+    document.addEventListener('DOMContentLoaded', function () {
+        // Make the grand total field read-only
+        const grandTotalField = document.getElementById('id_grand_total');
+        if (grandTotalField) {
+            grandTotalField.readOnly = true;
+        } else {
+            console.error("Field with ID 'id_grand_total' not found.");
+        }
+        // Attach event listeners
+        const fieldIds = ['id_total', 'id_shipping', 'id_tax'];
+        fieldIds.forEach(id => {
+            const field = document.getElementById(id);
+            if (field) {
+                field.addEventListener('input', updateGrandTotal);
+            } else {
+                console.error(`Field with ID '${id}' not found.`);
+            }
+        });
+    });
+</script>
+<script>
+    htmx.defineExtension('debug', {
+        onEvent: function (name, evt) {
+            if (console.debug) {
+                console.debug(name, evt);
+            } else if (console) {
+                console.log("DEBUG:", name, evt);
+            } else {
+                throw "NO CONSOLE SUPPORTED"
+            }
+        }
+    });
+</script>
+
+
+{% endblock %}

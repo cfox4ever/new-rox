@@ -6,7 +6,7 @@ from datetime import datetime
 from simple_history.models import HistoricalRecords
 from django.utils.text import slugify
 from .fileUtils import get_upload_path , upload_to , BaseFile
-
+from core.models import Branch
 
 
 class Invoice(models.Model):
@@ -23,30 +23,40 @@ class Invoice(models.Model):
        ('canceled','Canceled'),
        ('on_hold','On Hold')
    ]
+   branch = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name='branch_invoices',null=True,blank=True)
+
    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
-   invoice_number = models.CharField(max_length=100)
-   invoice_date = models.DateField()
+   invoice_number = models.CharField(max_length=100, blank=True, null=True)
    quote_number = models.CharField(max_length=100, blank=True, null=True)
-   total = models.DecimalField(max_digits=10, decimal_places=2)
-   shipping = models.DecimalField(max_digits=10, decimal_places=2)
-   tax = models.DecimalField(max_digits=10, decimal_places=2)
+   total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+   shipping = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+   tax = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
    grand_total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
    requisition_number = models.CharField(max_length=100, blank=True, null=True)
    po_number = models.CharField(max_length=100, blank=True, null=True)
    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
    url = models.URLField(blank=True, null=True)
-   requisition_date = models.DateField(blank=True, null=True)
-   po_date = models.DateField(blank=True, null=True)
-   received_date = models.DateField(blank=True, null=True)
-   sent_to_ap_date = models.DateField(blank=True, null=True)
+   invoice_date = models.DateTimeField( blank=True, null=True)
+   requisition_date = models.DateTimeField(blank=True, null=True)
+   po_date = models.DateTimeField(blank=True, null=True)
+   received_date = models.DateTimeField( blank=True, null=True)
+   sent_to_ap_date = models.DateTimeField( blank=True, null=True)
    created_at = models.DateTimeField( auto_now_add=True, editable=False,blank=True, null=True)
    updated_at = models.DateTimeField(auto_now=True,blank=True, null=True)
    history = HistoricalRecords()  # Add history tracking
    def save(self, *args, **kwargs):
-       self.grand_total = self.total + self.shipping + self.tax
+       self.grand_total = ((self.total if self.total is not None else 0)
+        + (self.shipping if self.shipping is not None else 0)
+        +(self.tax if self.tax is not None else 0))
        super().save(*args, **kwargs)
    def __str__(self):
-       return f"Invoice {self.invoice_number} for {self.vendor.name}"
+    if self.invoice_number:
+        return f"Invoice {self.invoice_number} for {self.vendor.name}"
+    else :
+        return "No Invoice Number"
+    class Meta :
+        unique_together = ("invoice_number", "vendor")
+
 
 class QuoteFile(BaseFile):
    invoice = models.ForeignKey("Invoice", on_delete=models.CASCADE, related_name="quote_files")

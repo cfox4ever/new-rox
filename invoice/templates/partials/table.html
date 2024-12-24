@@ -1,0 +1,77 @@
+{% load static %}
+<script src="{% static 'js/htmx.min.js' %}" defer></script>
+<table class="footable mb-3" data-paging="true" data-sorting="true">
+
+    <thead>
+        <tr>
+            <!-- data-toggle = where the toggle icon will appear -->
+            <th>ID</th>
+            <!-- hide this column in tablet and mobile -->
+            <th>Branch</th>
+            <!-- hide this column in mobile devices -->
+            <th data-breakpoints="xs sm">Vendor </th>
+            <th data-breakpoints="xs sm">Quote# </th>
+            <th data-breakpoints="xs sm">Invoice# </th>
+            <th data-breakpoints="xs sm">REQ# </th>
+            <th data-breakpoints="xs sm">PO# </th>
+            <th data-breakpoints="xs sm">Total </th>
+            <th data-breakpoints="xs sm">Status</th>
+            <th data-breakpoints="xs sm">URL </th>
+            <th data-breakpoints="xs sm">Invoice Date </th>
+            <th data-breakpoints="all">REQ Date </th>
+            <th data-breakpoints="all">PO Date </th>
+            <th data-breakpoints="all">Recieved Date </th>
+            <th data-breakpoints="all">Sent to AP Date </th>
+            <th data-breakpoints="all">Quote Files</th>
+            <th data-breakpoints="all">Invoice Files</th>
+            <th data-breakpoints="all">REQ Files</th>
+            <th data-breakpoints="all">PO Files</th>
+            <th data-breakpoints="all">Recieved Files</th>
+            <th data-breakpoints="all">Archive Files</th>
+            <th data-breakpoints="all">Edit</th>
+            <th data-breakpoints="all">history</th>
+
+
+
+
+        </tr>
+    </thead>
+    <tbody>
+
+        {% for data in data %}
+        <tr id="{{data.id}}">
+            <td>{{ data.id}}</td>
+            <td>{{ data.branch}}</td>
+            <td>{{ data.vendor}}</td>
+            <td>{{ data.quote_number}}</td>
+            <td>{% if data.invoice_number %} {{data.invoice_number}} {% else %} <button
+                    class="bg-secondary text-warning btn-sm"> No Invoice</button> {% endif %}</td>
+            <td>{% if data.requisition_number %} {{data.requisition_number}} {% else %} <button
+                    class="bg-secondary text-warning btn-sm"> No REQ</button> {% endif %}</td>
+            <td>{% if data.po_number %} {{data.po_number}} {% else %} <button class="bg-secondary text-warning btn-sm">
+                    No PO</button> {% endif %}</td>
+            <td>${{ data.grand_total}}</td>
+            <td>{{ data.status}}</td>
+            <td>{{ data.url|default_if_none:"--"}}</td>
+            <td>{{ data.invoice_date|date:"l, F j, Y h:i A"|default_if_none:"--"}} </td>
+            <td>{{ data.requisition_date|date:"l, F j, Y h:i A"|default_if_none:"--"}} </td>
+            <td>{{ data.po_date|date:"l, F j, Y h:i A"|default_if_none:"--"}} </td>
+            <td>{{ data.received_date|date:"l, F j, Y h:i A"|default_if_none:"No date provided" }}
+                <a class="btn btn-warning btn-sm" href="{% url 'recieve_now' data.id %}">
+                    Receive Now </a>
+            </td>
+            <td>{{ data.sent_to_ap_date|date:"l, F j, Y h:i A"|default_if_none:"No date provided" }}
+                <a class="btn btn-warning btn-sm" href="{% url 'sent_to_ap_date' data.id %}">
+                    Send To AP Now </a>
+            </td>
+
+
+        </tr>
+        {% endfor %}
+
+
+    </tbody>
+    <tfoot class="hide-if-no-paging">
+
+    </tfoot>
+</table>
