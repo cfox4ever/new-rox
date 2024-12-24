@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% block header %}
+
+{% include "table/header.html" %}
+
+
+
+
+
+{% endblock %}
+{% block content %}
+<h2>Files for {{ vendor.name }}</h2>
+<!-- File Upload Form -->
+<form method="POST" enctype="multipart/form-data" style="display:inline;">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-4">
+            {{ form.files|add_class:"form-control" }}
+        </div>
+        <div class="col-4">
+            {{ form.comment|add_class:"form-control" }}
+        </div>
+        <div class="col-4">
+            <button class="btn btn-primary btn-sm" type="submit">Add Files</button>
+        </div>
+    </div>
+</form>
+<!-- File List -->
+<div class="container mt-5">
+    <table class="footable mb-3" data-paging="true" data-sorting="true">
+
+        <thead>
+            <tr>
+                <th>File</th>
+                <th>Comment</th>
+                <th>View</th>
+                <th>Deleted</th>
+                <th data-breakpoints="xs sm">Created</th>
+                <th data-breakpoints="xs sm">Created by</th>
+
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for file in files %}
+            <tr>
+                <td>{{ file.file.name }}</td>
+                <td>{% if file.comment %}{{ file.comment }}{% endif %}</td>
+                <td><a class="btn btn-info btn-sm" href="{{ file.file.url }}" target="_blank">View</a></td>
+                <td>
+                    <form method="POST" action="{% url 'delete_file' file.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+                    </form>
+                </td>
+                <td>{{file.created_at}}</td>
+                <td>{{file.created_by}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot class="hide-if-no-paging">
+
+        </tfoot>
+    </table>
+</div>
+
+{% endblock %}
+{% block footer %}
+{% include "table/footer.html" %}
+{% endblock footer %}

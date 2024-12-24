@@ -1,6 +1,7 @@
 from django import forms
 from .models import Vendor,File
 from django.forms.widgets import ClearableFileInput
+from django.core.exceptions import ValidationError
 
 class VendorForm(forms.ModelForm):
    
@@ -11,14 +12,18 @@ class VendorForm(forms.ModelForm):
     #        'services': forms.Textarea(attrs={'rows': 4}),
     #        'notes': forms.Textarea(attrs={'rows': 4}),
     #    }
-class FileUploadForm(forms.ModelForm):
-   class Meta:
-       model = File
-       fields = ['file']
-class MultiFileInput(ClearableFileInput):
+
+class MultiFileInput(forms.ClearableFileInput):
    allow_multiple_selected = True  # Enable multiple file selection
+class MultiFileField(forms.FileField):
+   widget = MultiFileInput
+   def clean(self, value, initial=None):
+       if not value:
+           raise ValidationError("No files were uploaded.")
+       if not isinstance(value, list):
+           value = [value]
+       return value
 class MultiFileUploadForm(forms.Form):
-   files = forms.FileField(
-       widget=MultiFileInput(attrs={'multiple': True}),
-       label="Upload Files"
-   )
+   comment=forms.CharField(max_length=100,required=False)
+   files = MultiFileField()
+   
