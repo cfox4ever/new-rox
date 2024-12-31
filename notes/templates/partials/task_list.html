@@ -1,0 +1,13 @@
+<h1>Lists</h1>
+<div class="container">
+    {% for list in lists %}
+    <i class="fa fa-list-ul"></i> <a hx-post="{% url 'task' list.id %}" hx-target="#tasks">{{list.name}} </a>
+
+
+    <button class="btn btn-danger btn-sm fa fa-trash" hx-post="{% url 'task_list_delete' list.id %}"
+        hx-target="#task-lists">
+
+    </button>
+    <br>
+    {% endfor %}
+</div>

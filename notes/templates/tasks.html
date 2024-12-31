@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% block header %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+
+{% endblock header%}
+
+
+{% block content %}
+
+<div class="row mt-3">
+
+    <div class="col-6">
+        <form hx-post="{% url 'tasks' %}" hx-target="#task-lists">
+            {% csrf_token %}
+            <div class="row mt-3">
+                <div class="col-4">
+                    {{form.name|add_class:"form-control"}}
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-primary" type="submit">Add List</button>
+                </div>
+            </div>
+        </form>
+        <div id="task-lists">
+            {% include 'partials/task_list.html' %}
+        </div>
+    </div>
+    <div class="col-6">
+        <div id="tasks"></div>
+
+    </div>
+
+
+
+</div>
+
+
+
+
+
+{% endblock content %}
+
+
+{% block js %}
+<script>
+    document.body.addEventListener('htmx:configRequest', function (event) {
+        event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}'; // add a new parameter into the mix
+    });
+</script>
+
+{% endblock js %}
