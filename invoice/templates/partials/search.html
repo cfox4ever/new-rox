@@ -1,0 +1,145 @@
+<div class="card border border-warning bg-warning text-dark" id="searchDiv">
+    <div class="card-body">
+        <form method="GET" hx-get="{% url 'invoice_list' %}" hx-target="#invoices" hx-swap="innerHTML">
+            {% csrf_token %}
+            <div class="row mt-3">
+                <div class="col">
+                    <label>Branch</label>
+                    <select name="branch" class="form-control">
+                        <option value="">--------------------</option>
+                        {% for branch in branches %}
+                        <option value="{{ branch.id }}"> {{ branch.name }} </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col">
+                    <label>Vendor Name</label>
+                    <select name="vendor" class="form-control">
+                        <option value="">--------------------</option>
+                        {% for vendor in vendors %}
+                        <option value="{{ vendor.id }}"> {{ vendor.name }} </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col">
+                    <label for="invoice_number">Invoice Number</label>
+                    <input type="text" class="form-control" name="invoice_number"
+                        value="{{request.GET.invoice_number}}">
+                </div>
+                <div class="col">
+                    <label for="invoice_requisition_number">Requisition No</label>
+                    <input type="text" class="form-control" name="requisition_number"
+                        value="{{request.GET.requisition_number}}">
+                </div>
+                <div class="col">
+                    <label for="invoice_po_number">PO No</label>
+                    <input type="text" class="form-control" placeholder="Search by Invoice PO No" name="po_number"
+                        value="{{request.GET.po_number}}">
+                </div>
+            </div>
+            <hr class="text-danger">
+            <div class="row mt-3">
+                <div class="col">
+                    <label for="invoice_date">Invoice Date from</label>
+                    <input type="date" class="form-control" name="invoice_date_from">
+                    <label for="invoice_date">To</label>
+                    <input type="date" class="form-control" name="invoice_date_to">
+                </div>
+                <div class="col">
+                    <label for="invoice_date">REQ Date from</label>
+                    <input type="date" class="form-control" name="req_date_from">
+                    <label for="invoice_date">To</label>
+                    <input type="date" class="form-control" name="req_date_to" value="{{request.GET.invoice_date}}">
+                </div>
+                <div class="col">
+                    <label for="invoice_date">PO Date from</label>
+                    <input type="date" class="form-control" name="po_date_from" value="{{request.GET.invoice_date}}">
+                    <label for="invoice_date">To</label>
+                    <input type="date" class="form-control" name="po_date_to" value="{{request.GET.invoice_date}}">
+                </div>
+                <div class="col">
+                    <label for="invoice_date"> Recived Date from</label>
+                    <input type="date" class="form-control" name="received_date_from"
+                        value="{{request.GET.invoice_date}}">
+                    <label for="invoice_date">To</label>
+                    <input type="date" class="form-control" name="received_date_to"
+                        value="{{request.GET.invoice_date}}">
+                </div>
+                <div class="col">
+                    <label for="invoice_date">Sent to AP Date from</label>
+                    <input type="date" class="form-control" name="ap_date_from" value="{{request.GET.invoice_date}}">
+                    <label for="invoice_date">To</label>
+                    <input type="date" class="form-control" name="ap_date_to" value="{{request.GET.invoice_date}}">
+                </div>
+                <div class="col">
+                    <label for="invoice_date">Sent to Vendor Date from</label>
+                    <input type="date" class="form-control" name="vendor_date_from"
+                        value="{{request.GET.invoice_date}}">
+                    <label for="invoice_date">To</label>
+                    <input type="date" class="form-control" name="vendor_date_to" value="{{request.GET.invoice_date}}">
+                </div>
+
+            </div>
+
+
+            <hr class="text-danger">
+
+
+            <div class="row mt-3">
+
+                <div class="col">
+                    <label for="invoice_grand_total">Total From</label>
+                    <input type="number" class="form-control" name="total_form" value="{{request.GET.grand_total}}">
+                    <label for="invoice_grand_total">To</label>
+                    <input type="number" class="form-control" name="total_to" value="{{request.GET.grand_total}}">
+                </div>
+
+                <div class="col">
+                    <label for="invoice_grand_total">Grand Total From</label>
+                    <input type="number" class="form-control" name="grand_total_from"
+                        value="{{request.GET.grand_total}}">
+                    <label for="invoice_grand_total">To</label>
+                    <input type="number" class="form-control" name="grand_total_to" value="{{request.GET.grand_total}}">
+                </div>
+                <div class="col">
+                    <label for="invoice_status">Search by Invoice Status</label>
+                    <select name="status" class="form-control">
+                        <option value="" selected>Search by Invoice Status</option>
+                        <option value="pending">Pending </option>
+                        <option value="quote">Quote </option>
+                        <option value="requisition">Requesition</option>
+                        <option value="po_received">Recieved</option>
+                        <option value="sent_to_ap">Sent to AP</option>
+                        <option value="completed">Completed</option>
+
+                    </select>
+                </div>
+                <div class="col">
+                    <label for="invoice_status">Needs Follow up</label>
+                    <select name="follow_up" class="form-control">
+                        <option value="" selected>Search by Follow Up</option>
+                        <option value="true">Yes </option>
+                        <option value="">No </option>
+
+                    </select>
+                </div>
+                <div class="col">
+                    <label for="invoice_notes">Search by Invoice Notes</label>
+                    <input type="text" class="form-control" name="notes" value="{{request.GET.notes}}">
+                </div>
+
+            </div>
+            <hr class="text-danger">
+
+            <div class="row mt-3">
+                <div class="col">
+                    <button type="submit" class="btn btn-dark">Search</button>
+
+                    <a href="{% url 'invoice_list' %}" class="btn btn-danger">Clear</a>
+                </div>
+            </div>
+
+    </div>
+    </form>
+</div>
+</div>

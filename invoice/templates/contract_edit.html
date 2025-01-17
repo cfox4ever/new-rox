@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+
+{% block content %} 
+
+<div class="card" id="formDiv">
+    <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            {% include 'partial/formerrors.html' %}
+            <!-- Branch Name -->
+            <div class="mb-3 row">
+                <div class="col">
+                    <label class="">Branch</label>
+                    {{ form.branch|add_class:"form-select" }}
+                </div>
+                <div class="col">
+                    <label class=" ">Vendor</label>
+                    {{ form.vendor|add_class:"form-select" }}
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <div class="col">
+                    <label class=" ">Contract#</label>
+                    {{ form.contract_number|add_class:"form-control" }}
+                </div>
+                <div class="col">
+                    <label class="">Quote#</label>
+                    {{ form.quote_number|add_class:"form-control" }}
+                </div>
+
+                <div class="col">
+                    <label class="">Requestion#</label>
+                    {{ form.requisition_number|add_class:"form-control" }}
+                </div>
+                <div class="col">
+                    <label class="">PO#</label>
+                    {{ form.po_number|add_class:"form-control" }}
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <div class="col">
+                    <label class=" ">Total</label>
+                    {{ form.total|add_class:"form-control" }}
+                </div>
+
+                <div class="col">
+                    <label class="">Tax</label>
+                    {{ form.tax|add_class:"form-control" }}
+                </div>
+                <div class="col">
+                    <label class="">Grand Total</label>
+                    {{ form.grand_total|add_class:"form-control" }}
+                </div>
+                <div class="col">
+                    <label class="">URL</label>
+                    {{ form.url|add_class:"form-control" }}
+                </div>
+
+
+            </div>
+
+            <div class="mb-3 row">
+                <div class="col">
+                    <label class="">Contract Date From:</label>
+                    {{ form.contract_start_date|add_class:"form-control"|attr:"type:date" }}
+                    <label class="">To:</label>
+                    {{ form.contract_end_date|add_class:"form-control"|attr:"type:date" }}
+                </div>
+                <div class="col">
+                    <label class="">Req Date</label>
+                    {{ form.requisition_date|add_class:"form-control"|attr:"type:date" }}
+                </div>
+                <div class="col">
+                    <label class="">PO Date</label>
+                    {{ form.po_date|add_class:"form-control"|attr:"type:date" }}
+                </div>
+                <div class="col">
+                    <label class="">Count of Invoices</label>
+                    {{ form.invoices_count|add_class:"form-control" }}
+                </div>
+
+            </div>
+
+            <div class="mb-3 row">
+                <div class="col">
+                    <label class="">Sent to Vendor Date</label>
+                    {{ form.send_to_vendor_date|add_class:"form-control"|attr:"type:date" }}
+                </div>
+                <div class="col">
+                    <label class="">Require to be send to vendor</label>
+                    <br>
+                    {{ form.send_to_vendor|add_class:"form-check-input" }}
+                </div>
+                <div class="col">
+                    <label class=" ">Status</label>
+                    {{ form.status|add_class:"form-control" }}
+                </div>
+            </div>
+            <div class=" row">
+                <div class="col-12">
+                    <label class="">notes</label>
+                    {{ form.notes|add_class:"form-control" }}
+                </div>
+            </div>
+
+
+
+
+
+            <button type="submit" class="btn btn-{% if editing %}danger{% else %}primary{% endif%}">
+                {% if editing %}Update{%else%}Add{% endif%}Contract </button>
+
+            <a href="{% url 'contract_list' %}" type="button" class="btn btn-secondary">Cancel</a>
+
+        </form>
+    </div>
+</div>
+
+
+
+{% endblock content %}

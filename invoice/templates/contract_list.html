@@ -1,0 +1,263 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block header %}
+{% endblock %}
+{% block css %}
+<style>
+    .collapsible {
+        background-color: #777;
+        color: white;
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 15px;
+    }
+
+    .active,
+    .collapsible:hover {
+        background-color: #555;
+    }
+
+    .content {
+        padding: 0 18px;
+        display: none;
+        overflow: hidden;
+        background-color: #f1f1f1;
+    }
+
+    .flashing-text {
+        color: #FF0000;
+        /* This is a red color */
+    }
+</style>
+<style>
+    div.form {
+        position: relative;
+        left: 30px;
+    }
+
+    #formDiv {
+        width: 100%;
+        padding: 50px 0;
+        text-align: center;
+        background-color: lightblue;
+        margin-top: 20px;
+        display: none;
+    }
+
+    #searchDiv {
+        width: 100%;
+        padding: 50px 0;
+        text-align: center;
+        background-color: lightblue;
+        margin-top: 20px;
+        display: none;
+        /* Initially hidden */
+    }
+</style>
+{% endblock css %}
+{% block content %}
+<div class="mt-2 text-center">
+    <button class="btn btn-sm btn-primary" onclick="FormDiv()">
+        <li class="fa fa-plus"></li>
+        Add Contract
+    </button>
+</div>
+<div class="card" id="formDiv">
+    <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            {% include 'partial/formerrors.html' %}
+            <!-- Branch Name -->
+            <div class="mb-3 row">
+                <div class="col">
+                    <label class="">Branch</label>
+                    {{ form.branch|add_class:"form-select" }}
+                </div>
+                <div class="col">
+                    <label class=" ">Vendor</label>
+                    {{ form.vendor|add_class:"form-select" }}
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <div class="col">
+                    <label class=" ">Contract#</label>
+                    {{ form.contract_number|add_class:"form-control" }}
+                </div>
+                <div class="col">
+                    <label class="">Quote#</label>
+                    {{ form.quote_number|add_class:"form-control" }}
+                </div>
+
+                <div class="col">
+                    <label class="">Requestion#</label>
+                    {{ form.requisition_number|add_class:"form-control" }}
+                </div>
+                <div class="col">
+                    <label class="">PO#</label>
+                    {{ form.po_number|add_class:"form-control" }}
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <div class="col">
+                    <label class=" ">Total</label>
+                    {{ form.total|add_class:"form-control" }}
+                </div>
+
+                <div class="col">
+                    <label class="">Tax</label>
+                    {{ form.tax|add_class:"form-control" }}
+                </div>
+                <div class="col">
+                    <label class="">Grand Total</label>
+                    {{ form.grand_total|add_class:"form-control" }}
+                </div>
+                <div class="col">
+                    <label class="">URL</label>
+                    {{ form.url|add_class:"form-control" }}
+                </div>
+
+
+            </div>
+
+            <div class="mb-3 row">
+                <div class="col">
+                    <label class="">Contract Date From:</label>
+                    {{ form.contract_start_date|add_class:"form-control"|attr:"type:date" }}
+                    <label class="">To:</label>
+                    {{ form.contract_end_date|add_class:"form-control"|attr:"type:date" }}
+                </div>
+                <div class="col">
+                    <label class="">Req Date</label>
+                    {{ form.requisition_date|add_class:"form-control"|attr:"type:date" }}
+                </div>
+                <div class="col">
+                    <label class="">PO Date</label>
+                    {{ form.po_date|add_class:"form-control"|attr:"type:date" }}
+                </div>
+                <div class="col">
+                    <label class="">Count of Invoices</label>
+                    {{ form.invoices_count|add_class:"form-control" }}
+                </div>
+
+            </div>
+
+            <div class="mb-3 row">
+                <div class="col">
+                    <label class="">Sent to Vendor Date</label>
+                    {{ form.send_to_vendor_date|add_class:"form-control"|attr:"type:date" }}
+                </div>
+                <div class="col">
+                    <label class="">Require to be send to vendor</label>
+                    <br>
+                    {{ form.send_to_vendor|add_class:"form-check-input" }}
+                </div>
+                <div class="col">
+                    <label class=" ">Status</label>
+                    {{ form.status|add_class:"form-control" }}
+                </div>
+            </div>
+            <div class=" row">
+                <div class="col-12">
+                    <label class="">notes</label>
+                    {{ form.notes|add_class:"form-control" }}
+                </div>
+            </div>
+
+
+
+
+
+            <button type="submit" class="btn btn-{% if editing %}danger{% else %}primary{% endif%}">
+                {% if editing %}Update{%else%}Add{% endif%}Contract </button>
+
+            <a href="{% url 'contract_list' %}" type="button" class="btn btn-secondary">Cancel</a>
+
+        </form>
+    </div>
+</div>
+{% include "partials/form_errors.html" %}
+{% include "partials/contract_search.html"%}
+
+<div id="invoices">
+    {% block table %}
+    {% include "partials/contract_table.html" %}
+    {% endblock table %}
+</div>
+
+{% endblock content %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% block js %}
+<script>
+    // Function to update grand total
+    function updateGrandTotal () {
+        // Get the values of the fields
+        const total = parseFloat(document.getElementById('id_total').value) || 0;
+        const tax = parseFloat(document.getElementById('id_tax').value) || 0;
+        // Calculate the grand total
+        const grandTotal = total + tax;
+        // Set the grand total value
+        document.getElementById('id_grand_total').value = grandTotal.toFixed(2);
+    }
+    // Ensure the DOM is fully loaded before applying the script
+    document.addEventListener('DOMContentLoaded', function () {
+        // Make the grand total field read-only
+        const grandTotalField = document.getElementById('id_grand_total');
+        if (grandTotalField) {
+            grandTotalField.readOnly = true;
+        } else {
+            console.error("Field with ID 'id_grand_total' not found.");
+        }
+        // Attach event listeners
+        const fieldIds = ['id_total', 'id_tax'];
+        fieldIds.forEach(id => {
+            const field = document.getElementById(id);
+            if (field) {
+                field.addEventListener('input', updateGrandTotal);
+            } else {
+                console.error(`Field with ID '${id}' not found.`);
+            }
+        });
+    });
+</script>
+<script>
+    window.onload = function () {
+        // Only set display to 'none' if it's not already set by the template
+        var searchDiv = document.getElementById("searchDiv");
+        if (searchDiv.style.display === "") {
+            searchDiv.style.display = "none";
+        }
+        var formDiv = document.getElementById("formDiv");
+        if (formDiv.style.display === "") {
+            formDiv.style.display = "none";
+        }
+    };
+    function FormDiv () {
+        var x = document.getElementById("formDiv");
+        if (x.style.display === "none" || x.style.display === "") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+        }
+    }
+</script>
+{% endblock js %}

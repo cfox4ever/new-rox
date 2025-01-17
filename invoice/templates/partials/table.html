@@ -1,15 +1,21 @@
 {% load static %}
-<script src="{% static 'js/htmx.min.js' %}" defer></script>
-<table class="footable mb-3" data-paging="true" data-sorting="true">
+{% load custom_filters %}
+{% block table %}
+{% include "table/header.html" %}
+
+
+<table class="footable mb-3" data-paging="false" data-sorting="false">
 
     <thead>
         <tr>
             <!-- data-toggle = where the toggle icon will appear -->
             <th>ID</th>
+            <th>Follow up</th>
             <!-- hide this column in tablet and mobile -->
             <th>Branch</th>
             <!-- hide this column in mobile devices -->
             <th data-breakpoints="xs sm">Vendor </th>
+            <th data-breakpoints="xs sm">Contract </th>
             <th data-breakpoints="xs sm">Quote# </th>
             <th data-breakpoints="xs sm">Invoice# </th>
             <th data-breakpoints="xs sm">REQ# </th>
@@ -27,9 +33,13 @@
             <th data-breakpoints="all">REQ Files</th>
             <th data-breakpoints="all">PO Files</th>
             <th data-breakpoints="all">Recieved Files</th>
+            <th data-breakpoints="all">Email Files</th>
             <th data-breakpoints="all">Archive Files</th>
+            <th data-breakpoints="all">Send To Vendor</th>
             <th data-breakpoints="all">Edit</th>
             <th data-breakpoints="all">history</th>
+            <th data-breakpoints="all">Notes</th>
+            <th data-breakpoints="all">Created By</th>
 
 
 
@@ -41,8 +51,21 @@
         {% for data in data %}
         <tr id="{{data.id}}">
             <td>{{ data.id}}</td>
+            <td>
+                <form method="POST" action="{% url 'toggle_favorite' data.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link p-0">
+                        {% if data.favorited_by.all|length > 0 and request.user in data.favorited_by.all %}
+                        <i class="fa fa-heart text-danger"></i>
+                        {% else %}
+                        <i class="fa fa-heart-o"></i>
+                        {% endif %}
+                    </button>
+                </form>
+            </td>
             <td>{{ data.branch}}</td>
             <td>{{ data.vendor}}</td>
+             <td>{{ data.contract}}</td>
             <td>{{ data.quote_number}}</td>
             <td>{% if data.invoice_number %} {{data.invoice_number}} {% else %} <button
                     class="bg-secondary text-warning btn-sm"> No Invoice</button> {% endif %}</td>
@@ -50,9 +73,9 @@
                     class="bg-secondary text-warning btn-sm"> No REQ</button> {% endif %}</td>
             <td>{% if data.po_number %} {{data.po_number}} {% else %} <button class="bg-secondary text-warning btn-sm">
                     No PO</button> {% endif %}</td>
-            <td>${{ data.grand_total}}</td>
-            <td>{{ data.status}}</td>
-            <td>{{ data.url|default_if_none:"--"}}</td>
+            <td>${{ data.total}}</td>
+            <td>{{ data.get_status_display}}</td>
+            <td>{% if data.url %}<a href="{{data.url}}"> LINK </a>{% else %}--{% endif %}</td>
             <td>{{ data.invoice_date|date:"l, F j, Y h:i A"|default_if_none:"--"}} </td>
             <td>{{ data.requisition_date|date:"l, F j, Y h:i A"|default_if_none:"--"}} </td>
             <td>{{ data.po_date|date:"l, F j, Y h:i A"|default_if_none:"--"}} </td>
@@ -64,14 +87,222 @@
                 <a class="btn btn-warning btn-sm" href="{% url 'sent_to_ap_date' data.id %}">
                     Send To AP Now </a>
             </td>
+            <td> {% if data.quote_files.all %}
+                <div class="mb-3 row">
+                    <div class="col-sm-2">
+                        <ul>
+                            {% for file in data.quote_files.all %}
+                            <li>
+                                <a href="{{file.file.url }}" target="_blank">
+                                    {{ file.file.name|basename }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col-sm-2">
+                        {% else %}
+                        No files uploaded
+                        {% endif %}
+            
+            <a href="{% url  'add_quote' data.id %} " class="btn btn-secondary btn-xs">Quote
+                            Files</a>
+                    </div>
+                </div>
+            </td>
+            <td> {% if data.invoice_files.all %}
+                <div class="row">
+                    <div class="col-sm-2">
+                        <ul>
+                            {% for file in data.invoice_files.all %}
+                            <li>
+                                <a href="{{file.file.url }}" target="_blank">
+                                    {{ file.file.name|basename }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col-sm-2">
+                        {% else %}
+                        No files uploaded
+                        {% endif %}
+                        {% if data.invoice_number %}
+                        <a href="{% url  'add_invoice' data.id %} " class="btn btn-warning btn-xs">Invoice
+                            Files</a>
+                         {% else %}
+                         <span class="font-weight-bold text-danger">Add invoice number first</span>  
+                         {% endif %} 
+                    </div>
+                </div>
+            </td>
+            <td> {% if data.requisition_files.all %}
+                <div class="row">
+                    <div class="col-sm-2">
+                        <ul>
+                            {% for file in data.requisition_files.all %}
+                            <li>
+                                <a href="{{file.file.url }}" target="_blank">
+                                    {{ file.file.name|basename }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col-sm-2">
+                        {% else %}
+                        No files uploaded
+                        {% endif %}<a href="{% url  'add_req' data.id %} " class="btn btn-info btn-xs">REQ
+                            Files</a>
+                    </div>
+                </div>
+            </td>
+            <td> {% if data.po_files.all %}
+                <div class="row">
+                    <div class="col-sm-2">
+                        <ul>
+                            {% for file in data.po_files.all %}
+                            <li>
+                                <a href="{{file.file.url }}" target="_blank">
+                                    {{ file.file.name|basename }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col-sm-2">
+                        {% else %}
+                        No files uploaded
+                        {% endif %}<a href="{% url  'add_po' data.id %} " class="btn btn-primary btn-xs">PO
+                            Files</a>
+                    </div>
+                </div>
+            </td>
+            <td> {% if data.received_files.all %}
+                <div class="row">
+                    <div class="col-sm-2">
+                        <ul>
+                            {% for file in data.received_files.all %}
+                            <li>
+                                <a href="{{file.file.url }}" target="_blank">
+                                    {{ file.file.name|basename }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col-sm-2">
+                        {% else %}
+                        No files uploaded
+                        {% endif %}<a href="{% url  'add_recieve' data.id %} " class="btn btn-success btn-xs">Receive
+                            Files</a>
+                    </div>
+                </div>
+            </td>
+            <td> {% if data.email_files.all %}
+                <div class="row">
+                    <div class="col-sm-2">
+                        <ul>
+                            {% for file in data.email_files.all %}
+                            <li>
+                                <a href="{{file.file.url }}" target="_blank">
+                                    {{ file.file.name|basename }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col-sm-2">
+                        {% else %}
+                        No files uploaded
+                        {% endif %}<a href="{% url  'add_email' data.id %} " class="btn btn-light btn-xs">Email
+                            Files</a>
+                    </div>
+                </div>
+            </td>
+            <td> {% if data.archive_files.all %}
+                <div class="row">
+                    <div class="col-sm-2">
+                        <ul>
+                            {% for file in data.archive_files.all %}
+                            <li>
+                                <a href="{{file.file.url }}" target="_blank">
+                                    {{ file.file.name|basename }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col-sm-2">
+                        {% else %}
+                        No files uploaded
+                        {% endif %}<a href="{% url  'archive' data.id %} " class="btn btn-light btn-xs">Archive
+                            Files</a>
+                    </div>
+                </div>
+            </td>
+            <td>{% if data.send_to_vendor %}
+                <a class="btn btn-warning btn-sm" href="{% url 'send_to_vendor' data.id %} ">Send Now</a>--
+                {{data.vendor.email}}
+                {% else %}
+                Already Sent on {{data.send_to_vendor_date|date:"l, F j, Y h:i A"}}
+                {% endif %}
+            </td>
 
+            <td>
+                <a onclick="FormDiv()" class="btn btn-warning btn-sm" href="{% url 'edit_invoice' data.id %} ">Edit
+                    Invoice</a>
 
-        </tr>
-        {% endfor %}
+            </td>
+            <td>
+                {% if data.history.all %}
 
+                <a href="{% url 'invoice_history' data.id %} " class="btn btn-info btn-xs">History</a>
 
-    </tbody>
-    <tfoot class="hide-if-no-paging">
+                {% else %}
+                No History
+                {% endif %}
+            </td>
+            <td>
 
-    </tfoot>
+                {% if data.notes %}
+                <p?>{{data.notes}}</p? {% else %} No Notes {% endif %} </td>
+                
+                <td>{{data.created_by|default_if_none:"System"}}
+                 </tr> 
+                 {% endfor %} 
+                </tbody> 
+                <tfoot class="hide-if-no-paging">
+
+                </tfoot>
 </table>
+<div class="d-flex justify-content-center">
+    <!-- Pagination START-->
+
+
+    {% if data.has_previous %}
+    <a class="btn btn-outline-primary mb-4" href="?page=1">First</a>
+    <a class="btn btn-outline-primary mb-4" href="?page={{ data.previous_page_number }}">Previous</a>
+    {% endif %}
+
+    {% for num in data.paginator.page_range %}
+    {% if data.number == num %}
+    <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+    {% elif num > data.number|add:'-4' and num < data.number|add:'4' %} <a class="btn btn-outline-info mb-4"
+        href="?page={{ num }}">{{ num }}</a>
+    {% endif %}
+    {% endfor %}
+
+    {% if data.has_next %}
+    <a class="btn btn-outline-primary mb-4" href="?page={{ data.next_page_number }}">Next</a>
+    <a class="btn btn-outline-primary mb-4" href="?page={{ data.paginator.num_pages }}">Last</a> <br>
+    <a class="btn btn-success mb-4">Page {{data.number}} of {{data.paginator.num_pages}}</a>
+
+    {% endif %}
+
+
+
+    <!-- Pagination END -->
+</div>
+{% include "table/footer.html" %}
+{% endblock table %}

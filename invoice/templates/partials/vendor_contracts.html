@@ -1,0 +1,7 @@
+<select class="form-select" name="contract" hx-post="{% url 'invoice_for_contract' %}" hx-target="#invoice_form"
+  hx-swap="innerHTML" hx-trigger="change">
+  <option value="">Select Contract</option>
+  {% for contract in contracts %}
+  <option value="{{ contract.id }}">{{ contract.contract_number }}</option>
+  {% endfor %}
+</select>

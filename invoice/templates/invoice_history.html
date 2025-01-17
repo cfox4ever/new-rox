@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block table %}
+
+{% include "table/header.html" %}
+<table class="footable mb-3" data-paging="false" data-sorting="false">
+  <thead>
+    <tr>
+      <!-- data-toggle = where the toggle icon will appear -->
+      <th>Field</th>
+      <th>Changed From</th>
+      <!-- hide this column in tablet and mobile -->
+      <th>Changed To</th>
+      <th>By</th>
+      <th>Date of the Change</th>
+    
+
+
+
+
+    </tr>
+  </thead>
+  <tbody>
+    {% for h in h %}
+    <tr>
+      <td>{{h.field}}</td>
+      {% if h.field == 'url' %}
+      {% if h.changed_to %}
+    <td> <a href="{{h.changed_to}}">Old link</a></td>
+    {% else %}
+    <td> No link </td>
+    {% endif %}
+     {% if h.changed_from %}
+     <td><a href="{{h.changed_from}}">New link</a></td>
+     {% else %}
+      <td> No link </td>
+    {% endif %}
+
+     {% else %}
+      <td>{{ h.changed_to}}</td>
+      <td>{{h.changed_from}}</td>
+      {% endif %}
+     
+      <td>{{ h.by}}</td>
+      <td>{{ h.date}}</td>
+      
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div class="text-center">
+  <a type="button" class="btn btn-success" href="{% url  'invoice_list'%}">Back
+  </a>
+</div>
+
+{% include "table/footer.html" %} {% endblock table %}
