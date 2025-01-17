@@ -25,6 +25,7 @@ urlpatterns = [
     path('invoices/', include('invoice.urls')),
     path('',include('core.urls')),
     path('',include('vendors.urls')),
+    path('',include('notes.urls')),
     path('private-media/', include('private_storage.urls')),
 ]
 if settings.DEBUG:

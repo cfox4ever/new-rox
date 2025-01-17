@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "django_htmx",
+    "django_filters",
     'private_storage',
     "widget_tweaks",
     'simple_history',
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
     "invoice",
     "notes",
     "vendors",
+    "reports"
    
 ]
 
