@@ -41,7 +41,25 @@ def task_list_delete(request,pk):
 def task(request,pk):
     list = TaskList.objects.get(id=pk)
     tasks = Task.objects.filter(task_list=list)
+    
     form = TaskForm()
-    return render (request,"partials/task.html",{"tasks":tasks,"form":form})
+    if request.method == "POST":
+        form = TaskForm(request.POST or None)
+        if form.is_valid():
+            task_item = form.save(commit=False)
+            task_item.task_list = list
+            task_item.save()
+            form = TaskForm()
+            tasks = Task.objects.filter(task_list=list)
+            return render (request,"partials/tasks.html",{"tasks":tasks})
+        
+    return render (request,"partials/task.html",{"tasks":tasks,"task_list":list,"form":form})
 
 
+def task_completed(request,pk):
+    task = Task.objects.get(id=pk)
+    task.is_done = not task.is_done
+    task.save()
+    list = task.task_list
+    tasks = Task.objects.filter(task_list=list)
+    return render (request,"partials/tasks.html",{"tasks":tasks})

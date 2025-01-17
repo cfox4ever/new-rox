@@ -1,13 +1,52 @@
-<h1>Lists</h1>
+<h1 class="mb-4">Task Lists</h1>
 <div class="container">
-    {% for list in lists %}
-    <i class="fa fa-list-ul"></i> <a hx-post="{% url 'task' list.id %}" hx-target="#tasks">{{list.name}} </a>
-
-
-    <button class="btn btn-danger btn-sm fa fa-trash" hx-post="{% url 'task_list_delete' list.id %}"
-        hx-target="#task-lists">
-
-    </button>
-    <br>
-    {% endfor %}
+    <div class="list-group">
+        {% for list in lists %}
+        <div class="list-group-item d-flex justify-content-between align-items-center task-list-item  text-dark">
+            <div>
+                <i class="fa fa-list-ul"></i>
+                <a href="#" hx-post="{% url 'task' list.id %}" hx-target="#tasks"
+                    class="text-decoration-none task-link">{{ list.name }}</a>
+                <div class="mt-2">
+                    <span class="badge badge-success">Completed: {{ list.complete_tasks.count }}</span>
+                    <span class="badge badge-warning">In Completed: {{ list.incomplete_tasks.count }}</span>
+                    <span class="badge badge-info">Due next Week: {{ list.notes_due_next_week.count }}</span>
+                    <span class="badge badge-primary">Due this Month: {{ list.notes_due_this_month.count }}</span>
+                    <span class="badge badge-secondary">Due this Year: {{ list.notes_due_this_year.count }}</span>
+                </div>
+            </div>
+            <button class="btn btn-danger btn-sm" hx-post="{% url 'task_list_delete' list.id %}"
+                hx-target="#task-lists">
+                <i class="fa fa-trash"></i>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const listItems = document.querySelectorAll('.task-list-item');
+        const taskLinks = document.querySelectorAll('.task-link');
+
+        taskLinks.forEach(link => {
+            link.addEventListener('click', function () {
+                taskLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    });
+</script>
+
+<style>
+    .task-list-item {
+        background-color: rgb(54, 56, 45);
+        /* Dark gray background */
+    }
+
+    .task-link.active {
+        color: #28a745;
+        /* Green color */
+        font-weight: bold;
+    }
+</style>

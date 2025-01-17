@@ -77,7 +77,7 @@ class Task(models.Model):
         on_delete=models.CASCADE,
     )
    name = models.CharField(max_length=255)  # Title of the note
-   details = models.TextField()  # Detailed content of the note
+   details = models.TextField(blank=True,null=True)  # Detailed content of the note
    due_date = models.DateTimeField()  # Deadline for the note
    is_done = models.BooleanField(default=False)  # Completion status
    completed_at =models.DateTimeField(blank=True,null=True)  # Note creation timestamp

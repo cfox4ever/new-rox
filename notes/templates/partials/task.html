@@ -1,2 +1,28 @@
-{{form.as_p}}
+{% load widget_tweaks %}
+{{task_list.name}}
+<form hx-post="{% url 'task' task_list.id %}" hx-target="#all-tasks" class="mb-4">
+  {% csrf_token %}
+  <div class="mb-3 row">
+    <div class="col-6">
+      <label class="col-sm-2 col-form-label ">Note</label>
+      {{ form.name|add_class:"form-control" }}
+    </div>
+    <div class="col-6">
+      <label class="col-sm-2 col-form-label ">Due Date</label>
+      {{ form.due_date|add_class:"form-control" }}
+    </div>
+  </div>
+  <div class="mb-3 row">
+    <label class="col-sm-2 col-form-label ">Details</label>
+    {{ form.details|add_class:"form-control" }}
+  </div>
 
+  <button class="btn btn-primary" type="submit">
+    <i class="fa fa-plus"></i> Add
+  </button>
+</form>
+
+<div id="all-tasks">
+  <h4>Tasks</h4>
+  {% include 'partials/tasks.html' %}
+</div>
