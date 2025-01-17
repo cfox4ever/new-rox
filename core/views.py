@@ -7,7 +7,7 @@ from .forms import BranchForm
 from .models import Branch
 from django.shortcuts import get_object_or_404
 def home(request):
-    return render(request, "index.html")
+    return render(request, "base.html")
 
 def login_view(request):
    form= AuthenticationForm() 
