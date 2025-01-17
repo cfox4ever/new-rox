@@ -122,9 +122,10 @@ def vendor_files(request, vendor_id):
        if form.is_valid():
            uploaded_files = request.FILES.getlist('files')
            vendor_name = vendor.name.replace(" ", "_").upper()
-           last_file = File.objects.filter(vendor=vendor).last()
+           last_file = File.objects.filter(vendor=vendor)
            comment = form.cleaned_data['comment']
-           x = last_file.id
+           x = last_file.count()
+            
            for uploaded_file in uploaded_files:
                original_extension = uploaded_file.name.split('.')[-1]
                new_filename = f"{vendor_name}_{x+1}.{original_extension}"

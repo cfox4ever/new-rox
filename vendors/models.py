@@ -2,7 +2,7 @@ from django.db import models
 from private_storage.fields import PrivateFileField
 from simple_history.models import HistoricalRecords
 from core.models import Branch
-from  invoice.fileUtils import get_upload_path , upload_to , BaseFile
+from  invoice.fileUtils import get_upload_path  , BaseFile
 from django.dispatch import receiver
 from django.db.models.signals import post_delete
 from django.contrib.auth.models import User
